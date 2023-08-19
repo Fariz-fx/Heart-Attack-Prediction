@@ -27,6 +27,11 @@ class HeartAttackPredictionRequest(BaseModel):
 @app.post("/predict")
 def predict_heart_attack(data: HeartAttackPredictionRequest):
     try:
+        # Log the values
+        logger.info(f"CP: {data.cp}")
+        logger.info(f"Trestbps: {data.trestbps}")
+        logger.info(f"Chol: {data.chol}")
+        logger.info(f"FBS: {data.fbs}")
         prompt = f"Predict the probability of a heart attack with the following input:\n\nAge: {data.age}\nSex: {data.sex}\nChest Pain Type: {data.cp}\nTrestbps: {data.trestbps}\nChol: {data.chol}\nFBS: {data.fbs}\nRestecg: {data.restecg}\nThalach: {data.thalach}\nExang: {data.exang}\nOldpeak: {data.oldpeak}\nSlope: {data.slope}\nCA: {data.ca}\nThal: {data.thal}\n\nRisk factors for heart attack are: smoking, high blood pressure, high cholesterol, obesity, diabetes, sedentary lifestyle, and family history."
 
         prediction = generate_response(prompt)
