@@ -1,7 +1,7 @@
 import datetime
 from fastapi import FastAPI
 import logging
-from openai_integration import generate_response
+from openai_integration import generate_response,advanced_generate_response
 from pydantic import BaseModel
 import uvicorn
 
@@ -47,7 +47,8 @@ def predict_heart_attack(data: HeartAttackPredictionRequest):
         logger.info(f"Thal: {data.thal}")
         prompt = f"Predict the probability of a heart attack with the following input:\n\nAge: {data.age}\nSex: {data.sex}\nChest Pain Type: {data.cp}\nTrestbps: {data.trestbps}\nChol: {data.chol}\nFBS: {data.fbs}\nRestecg: {data.restecg}\nThalach: {data.thalach}\nExang: {data.exang}\nOldpeak: {data.oldpeak}\nSlope: {data.slope}\nCA: {data.ca}\nThal: {data.thal}\n\nRisk factors for heart attack are: smoking, high blood pressure, high cholesterol, obesity, diabetes, sedentary lifestyle, and family history."
         prediction = generate_response(prompt)
-        logger.info(f"Prompting: {prediction}")
+        advanced_predictions = advanced_generate_response(data)
+        logger.info(f"Prompting: {prediction} | {advanced_predictions}")
         return {"prediction": prediction}
             #return {"prediction": prediction.item()}  # Return prediction as a single value
 
