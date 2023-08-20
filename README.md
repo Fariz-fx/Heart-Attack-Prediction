@@ -9,10 +9,11 @@ This repository contains code for a heart attack prediction application using St
 
 ## Installation
 
-1. Clone the repository:
+1. Clone the repository and Navigate to the folder:
 
 ```git
-git clone https://github.com/
+https://github.com/Fariz-fx/Heart-Attack-Prediction.git
+cd .\Heart-Attack-Prediction\
 ```
 
 2. (Optional) Create and activate a virtual environment:
@@ -23,8 +24,16 @@ python -m venv env
 
 - On Windows:
 
+In Bash:
+
 ```bash
 env\Scripts\activate
+```
+
+In Powershell:
+
+```powershell
+venv\Scripts\Activate.ps1
 ```
 
 - On macOS and Linux:
@@ -40,6 +49,30 @@ Note: Using a virtual environment is optional but recommended to isolate project
 ```git
 pip install -r requirements.txt
 ```
+
+4. Rename from .env.sample to .env
+
+Rename the file .env.sample to .env and get the API key from [OpenAI](https://platform.openai.com/account/api-keys)
+
+5. Run Uvicorn Locally
+
+```bash
+cd .\app\
+uvicorn fastapi_app:app --reload
+```
+
+Visit [Swagger to test API](http://localhost:8000/docs#/)
+
+6. Run Streamlit Locally
+
+Open New Terminal and ensure uvicorn is running in another terminal
+
+```bash
+cd .\client\
+streamlit run streamlit_app.py
+```
+
+Visit [Streamlit locally to test frontend](http://localhost:8501/)
 
 ## Usage
 
@@ -85,7 +118,9 @@ The Streamlit app will open in your default web browser.
 
 ## Credits
 
-This project utilizes the OpenAI GPT-3 model for generating predictions. Visit the [OpenAI website](https://openai.com/) to learn more about their model and obtain an API key.
+1. This project utilizes the OpenAI GPT-3 model for generating predictions. Visit the [OpenAI website](https://openai.com/) to learn more about their model and obtain an API key.
+
+2. This project utilizes the [Data Model csv file from rashikrahmanpritom which is available in Kaggle.com](https://www.kaggle.com/datasets/rashikrahmanpritom/heart-attack-analysis-prediction-dataset?resource=download)
 
 ## License
 
