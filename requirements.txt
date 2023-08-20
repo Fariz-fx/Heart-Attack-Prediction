@@ -4,3 +4,8 @@ openai
 python-dotenv
 streamlit
 requests
+numpy
+pandas
+sklearn
+scikit-learn
+pickle-middleware
