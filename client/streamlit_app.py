@@ -15,23 +15,47 @@ def log_analytics(cp, trestbps, chol, fbs):
     logger.info(f"Chol: {chol}")
     logger.info(f"FBS: {fbs}")
 
-def make_prediction(data):
+def make_prediction(data,model_type):
     try:
-        response = requests.post(f"{API_URL}/predict", json=data)
-        if response.status_code == 200:
-            if prediction := response.json().get("prediction"):
-                st.write("Prediction:", prediction)
+        # response = requests.post(f"{API_URL}/predict", json=data)
+        # if response.status_code == 200:
+        #     if prediction := response.json().get("prediction"):
+        #         st.write("Prediction:", prediction)
+        #     else:
+        #         st.warning("Unable to provide a prediction. Please check the input values.")
+        # else:
+        #     st.error("Failed to get prediction. Please try again.")
+        #     logger.error(f"Prediction request failed with status code: {response.status_code}")
+        if model_type == "ChatGPT":
+            response = requests.post(f"{API_URL}/predict_chatgpt", json=data)
+            if response.status_code == 200:
+                if prediction := response.json().get("prediction"):
+                    st.write("ChatGPT Prediction:", prediction)
+                else:
+                    st.warning("Unable to provide a ChatGPT prediction. Please check the input values.")
             else:
-                st.warning("Unable to provide a prediction. Please check the input values.")
+                st.error("Failed to get ChatGPT prediction. Please try again.")
+                logger.error(f"ChatGPT prediction request failed with status code: {response.status_code}")
+        elif model_type == "Custom Model":
+            response = requests.post(f"{API_URL}/predict_custom_model", json=data)
+            if response.status_code == 200:
+                if prediction := response.json().get("prediction"):
+                    st.write("Custom Model Prediction:", prediction)
+                else:
+                    st.warning("Unable to provide a Custom Model prediction. Please check the input values.")
+            else:
+                st.error("Failed to get Custom Model prediction. Please try again.")
+                logger.error(f"Custom Model prediction request failed with status code: {response.status_code}")
         else:
-            st.error("Failed to get prediction. Please try again.")
-            logger.error(f"Prediction request failed with status code: {response.status_code}")
+            st.error("Invalid model type selected.")
     except requests.exceptions.RequestException as e:
         st.error("Failed to connect to the server. Please try again later.")
         logger.error(f"Server connection error: {str(e)}")
     except Exception as e:
         st.error("An error occurred. Please try again.")
         logger.error(f"Error occurred: {str(e)}")
+
+model_type = st.selectbox("Model Type", ["ChatGPT", "Custom Model"])
 
 age = st.number_input("Age", min_value=1, max_value=100, value=30)
 sex = st.selectbox("Sex", ["Male", "Female"])
@@ -105,4 +129,4 @@ if st.button("Predict"):
     if enable_analytics:
         log_analytics(cp_options[cp], trestbps, chol, fbs)
 
-    make_prediction(data)
+    make_prediction(data,model_type)

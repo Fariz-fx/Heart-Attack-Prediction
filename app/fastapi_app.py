@@ -1,9 +1,14 @@
 import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import logging
-from app.openai_integration import generate_response
+from openai_integration import generate_response
 from pydantic import BaseModel
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+from sklearn.ensemble import RandomForestClassifier
+import pickle
+import pandas as pd
+import numpy as np
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -11,6 +16,10 @@ logging.basicConfig(level=logging.INFO)
 now = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 
 app = FastAPI()
+
+# Load the trained model 
+model = pickle.load(open('model/model.pkl', 'rb'))
+scaler = pickle.load(open('model/scaler.pkl', 'rb')) 
 
 class HeartAttackPredictionRequest(BaseModel):
     age: int
@@ -26,8 +35,13 @@ class HeartAttackPredictionRequest(BaseModel):
     slope: int
     ca: int
     thal: int
+    
+def preprocess(data: HeartAttackPredictionRequest):
+    df = pd.DataFrame(data.dict(), index=[0])  # fixed code error
+    #df = pd.DataFrame(data)
+    return scaler.transform(df)
 
-@app.post("/predict")
+@app.post("/predict_chatgpt")
 def predict_heart_attack(data: HeartAttackPredictionRequest):
     try:
         # Logging essential information
@@ -50,6 +64,25 @@ def predict_heart_attack(data: HeartAttackPredictionRequest):
         logger.info(f"Prompting: {prediction}")
         return {"prediction": prediction}
             #return {"prediction": prediction.item()}  # Return prediction as a single value
+
+    except Exception as e:
+        logger.error(f"Error occurred: {str(e)}")
+        return {"error": "Failed to process the request."}
+
+@app.post("/predict_custom_model")
+def predict_heart_attack_custom_model(data: HeartAttackPredictionRequest):
+    try:
+        # Logging essential information
+        logger.info(f"Data Submitted: {now}")
+
+        # preprocessing
+        data_preprocessed = preprocess(data)
+
+        # Make prediction
+        prediction = model.predict(data_preprocessed)
+
+        # Return formatted prediction result
+        return {"prediction": prediction[0]}  # Return prediction as a single value
 
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")
