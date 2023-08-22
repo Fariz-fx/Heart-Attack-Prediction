@@ -5,7 +5,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
-import pickle
+#import pickle
+import joblib
+import warnings
 
 # Load your data
 df = pd.read_csv("data.csv")
@@ -30,8 +32,13 @@ model = SVC()
 model.fit(X_train, y_train)
 
 # Save the trained model and scaler
-pickle.dump(model, open('model.pkl', 'wb'))
-pickle.dump(scaler, open('scaler.pkl', 'wb'))
+# pickle.dump(model, open('model.pkl', 'wb'))
+# pickle.dump(scaler, open('scaler.pkl', 'wb'))
+
+# Save the trained model and scaler
+joblib.dump(model, 'model.joblib')
+joblib.dump(scaler, 'scaler.joblib')
+
 
 # Get and print accuracy of the model
 y_pred = model.predict(X_test)

@@ -6,6 +6,5 @@ streamlit
 requests
 numpy
 pandas
-sklearn
 scikit-learn
-pickle-middleware
+joblib
