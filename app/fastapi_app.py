@@ -6,7 +6,8 @@ from pydantic import BaseModel
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from sklearn.ensemble import RandomForestClassifier
-import pickle
+#import pickle
+import joblib
 import pandas as pd
 import numpy as np
 
@@ -18,8 +19,10 @@ now = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 app = FastAPI()
 
 # Load the trained model 
-model = pickle.load(open('model/model.pkl', 'rb'))
-scaler = pickle.load(open('model/scaler.pkl', 'rb')) 
+# model = pickle.load(open('model/model.pkl', 'rb'))
+# scaler = pickle.load(open('model/scaler.pkl', 'rb')) 
+model = joblib.load('model/model.joblib')
+scaler = joblib.load('model/scaler.joblib') 
 
 class HeartAttackPredictionRequest(BaseModel):
     age: int
