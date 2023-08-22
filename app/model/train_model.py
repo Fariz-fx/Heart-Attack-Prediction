@@ -1,11 +1,12 @@
 import pandas as pd
 #from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 #from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
-import pickle
+#import pickle
+import joblib
 
 # Load your data
 df = pd.read_csv("data.csv")
@@ -30,9 +31,16 @@ model = SVC()
 model.fit(X_train, y_train)
 
 # Save the trained model and scaler
-pickle.dump(model, open('model.pkl', 'wb'))
-pickle.dump(scaler, open('scaler.pkl', 'wb'))
+# pickle.dump(model, open('model.pkl', 'wb'))
+# pickle.dump(scaler, open('scaler.pkl', 'wb'))
+
+joblib.dump(model, 'model.joblib')
+joblib.dump(scaler, 'scaler.joblib')
 
 # Get and print accuracy of the model
 y_pred = model.predict(X_test)
 print("Model Accuracy: ", accuracy_score(y_test, y_pred))
+
+# Cross validation
+scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5)
+print(f"Cross Validation Score: {scores.mean()}\n")
