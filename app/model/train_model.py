@@ -1,6 +1,6 @@
 import pandas as pd
 #from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier,GradientBoostingClassifier
 from sklearn.svm import SVC
@@ -58,5 +58,7 @@ for name, model in models:
 
     print("Summary: ")
     print(pd.DataFrame(list(zip(names, results)), columns=['Model', 'Accuracy']))
-
+    # Cross validation
+    scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5)
+    print(f"{name} Cross Validation Score: {scores.mean()}\n")
 #print("Model Accuracy: ", accuracy_score(y_test, y_pred))
