@@ -5,7 +5,6 @@ from openai_integration import generate_response
 from pydantic import BaseModel
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
-from sklearn.ensemble import RandomForestClassifier
 #import pickle
 import joblib
 import pandas as pd
