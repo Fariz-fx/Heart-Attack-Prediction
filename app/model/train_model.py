@@ -38,46 +38,59 @@ models.append(('NB', GaussianNB()))
 models.append(('Bernoulli', BernoulliNB()))
 models.append(('GBoost', GradientBoostingClassifier()))
 
-def run_models(models, X_train, y_train, X_test, y_test):
-    results = []
-    names = []
-    print("Summary: ")
+
+results = []
+# names = []
+# print("Summary: ")
     
-    for name, model in models:
-        # Train model
-        model.fit(X_train, y_train)
+for name, model in models:
+    # Train model
+    model.fit(X_train, y_train)
 
-        # Save the trained model and scaler
-        # pickle.dump(model, open('model.pkl', 'wb'))
-        # pickle.dump(scaler, open('scaler.pkl', 'wb'))
+    # Accuracy
+    acc = model.score(X_test, y_test)
 
-        # Make Prediction
-        y_pred = model.predict(X_test)
-        # Get accuracy of the Model
-        acc = accuracy_score(y_test, y_pred)
-        results.append(acc)
-        names.append(name)
+    # Cross validation
+    cv_score = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5).mean()
+
+    results.append([name, acc, cv_score])
+
+# Convert the results to dataframe and print
+df_result = pd.DataFrame(results, columns=['Model', 'Accuracy', 'CrossValidationScore'])
+print(df_result)
+
+    # Save the trained model and scaler
+    # pickle.dump(model, open('model.pkl', 'wb'))
+    # pickle.dump(scaler, open('scaler.pkl', 'wb'))
+
+    # Make Prediction
+#     y_pred = model.predict(X_test)
+#     # Get accuracy of the Model
+#     acc = accuracy_score(y_test, y_pred)
+
         
-        # Get prediction in percentage
-        y_proba = model.predict_proba(X_test)
+#     # Get prediction in percentage
+#     y_proba = model.predict_proba(X_test)
         
-        # Cross validation
-        scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5)
+#     # Cross validation
+#     scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5).mean()
+#     results.append(acc,scores)
+#     names.append(name)
         
-        print(f'Model: {name}')
-        print(f'Accuracy: {acc * 100.0:.2f}%')
-        print(f'Cross Validation Score: {scores.mean() * 100.0:.2f}%\n')
+#     # print(f'Model: {name}')
+#     # print(f'Accuracy: {acc * 100.0:.2f}%')
+#     # print(f'Cross Validation Score: {scores.mean() * 100.0:.2f}%\n')
 
-    return pd.DataFrame(list(zip(names, results)), columns=['Model', 'Accuracy'])
+#     return pd.DataFrame(list(zip(names, results)), columns=['Model', 'Accuracy'])
 
-# Run models
-model_summary = run_models(models, X_train, y_train, X_test, y_test)
-print(model_summary)
+# # Run models
+# model_summary = run_models(models, X_train, y_train, X_test, y_test)
+# print(model_summary)
 
-        # print('Accuracy of %s: %f' % (name, acc))
-        # print(pd.DataFrame(list(zip(names, results)), columns=['Model', 'Accuracy']))
-        # # Cross validation
-        # scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5)
-        # print(f"{name} Cross Validation Score: {scores.mean()}\n")
+#         # print('Accuracy of %s: %f' % (name, acc))
+#         # print(pd.DataFrame(list(zip(names, results)), columns=['Model', 'Accuracy']))
+#         # # Cross validation
+#         # scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5)
+#         # print(f"{name} Cross Validation Score: {scores.mean()}\n")
         
-#print("Model Accuracy: ", accuracy_score(y_test, y_pred))
+# #print("Model Accuracy: ", accuracy_score(y_test, y_pred))
