@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 import joblib
@@ -13,7 +13,8 @@ result_column="output" # In CSV the result column name
 scaler_joblib_name="scaler.joblib"
 model_joblib_name="model.joblib"
 test_size_declared=0.2 
-random_state_declared=0
+random_state_declared=62 #0
+cross_validation_value=7 #5
 
 def load_data(path: str):
     try:
@@ -44,7 +45,7 @@ def split_data(X, y, test_size=test_size_declared, random_state=random_state_dec
 
 def train_save_model(X_train, y_train, model_path):
     try:
-        model = SVC()
+        model = LogisticRegression()#SVC(probability=True)
         model.fit(X_train, y_train)
         joblib.dump(model, model_path)
         return model
@@ -56,7 +57,7 @@ def test_model(model, X_test, y_test):
     y_pred = model.predict(X_test)
     return accuracy_score(y_test, y_pred)
 
-def perform_cross_validation(model, X_train, y_train, cv=5):
+def perform_cross_validation(model, X_train, y_train, cv=cross_validation_value):
     scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=cv)
     return scores.mean()
 
