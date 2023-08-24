@@ -83,10 +83,15 @@ def predict_heart_attack_custom_model(data: HeartAttackPredictionRequest):
 
         # Make prediction
         prediction = model.predict(data_preprocessed)
-
-        logger.info(f"Prompting: {prediction}")
-        # Return formatted prediction result
-        return {"prediction": int(prediction[0])}  # Return prediction as a single value
+        prediction_probability = model.predict_proba(data_preprocessed)
+        prediction_probability_percentage = prediction_probability[0][1] * 100
+        logger.info(f"Prompting: {prediction} \n Prediction Probability: {prediction_probability}")
+        message = 'The probability of the person having a heart attack is {:.2f}%.'.format(prediction_probability_percentage)
+        return {
+            "message": message,
+            "Prediction_Probability_Percentage": prediction_probability_percentage,
+        }
+            #{"prediction": int(prediction[0])}  # Return prediction as a single value
 
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")

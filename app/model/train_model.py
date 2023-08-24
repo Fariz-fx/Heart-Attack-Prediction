@@ -44,7 +44,7 @@ def split_data(X, y, test_size=test_size_declared, random_state=random_state_dec
 
 def train_save_model(X_train, y_train, model_path):
     try:
-        model = SVC()
+        model = SVC(probability=True)
         model.fit(X_train, y_train)
         joblib.dump(model, model_path)
         return model
