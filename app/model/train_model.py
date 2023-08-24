@@ -8,7 +8,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
-import pickle
+#import pickle
 
 # Load your data
 df = pd.read_csv("data.csv")
@@ -32,33 +32,52 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 models = [('LR', LogisticRegression())]
 models.append(('RF', RandomForestClassifier()))
-models.append(('SVC', SVC()))
+models.append(('SVC', SVC(probability=True)))
 models.append(('KNN', KNeighborsClassifier()))
 models.append(('NB', GaussianNB()))
 models.append(('Bernoulli', BernoulliNB()))
 models.append(('GBoost', GradientBoostingClassifier()))
 
-results = []
-names = []
-
-for name, model in models:
-# Train model
-    model.fit(X_train, y_train)
-
-    # Save the trained model and scaler
-    # pickle.dump(model, open('model.pkl', 'wb'))
-    # pickle.dump(scaler, open('scaler.pkl', 'wb'))
-
-    # Get and print accuracy of the model
-    y_pred = model.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    results.append(acc)
-    names.append(name)
-    print('Accuracy of %s: %f' % (name, acc))
-
+def run_models(models, X_train, y_train, X_test, y_test):
+    results = []
+    names = []
     print("Summary: ")
-    print(pd.DataFrame(list(zip(names, results)), columns=['Model', 'Accuracy']))
-    # Cross validation
-    scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5)
-    print(f"{name} Cross Validation Score: {scores.mean()}\n")
+    
+    for name, model in models:
+        # Train model
+        model.fit(X_train, y_train)
+
+        # Save the trained model and scaler
+        # pickle.dump(model, open('model.pkl', 'wb'))
+        # pickle.dump(scaler, open('scaler.pkl', 'wb'))
+
+        # Make Prediction
+        y_pred = model.predict(X_test)
+        # Get accuracy of the Model
+        acc = accuracy_score(y_test, y_pred)
+        results.append(acc)
+        names.append(name)
+        
+        # Get prediction in percentage
+        y_proba = model.predict_proba(X_test)
+        
+        # Cross validation
+        scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5)
+        
+        print(f'Model: {name}')
+        print(f'Accuracy: {acc * 100.0:.2f}%')
+        print(f'Cross Validation Score: {scores.mean() * 100.0:.2f}%\n')
+
+    return pd.DataFrame(list(zip(names, results)), columns=['Model', 'Accuracy'])
+
+# Run models
+model_summary = run_models(models, X_train, y_train, X_test, y_test)
+print(model_summary)
+
+        # print('Accuracy of %s: %f' % (name, acc))
+        # print(pd.DataFrame(list(zip(names, results)), columns=['Model', 'Accuracy']))
+        # # Cross validation
+        # scores = cross_val_score(estimator=model, X=X_train, y=y_train, cv=5)
+        # print(f"{name} Cross Validation Score: {scores.mean()}\n")
+        
 #print("Model Accuracy: ", accuracy_score(y_test, y_pred))
