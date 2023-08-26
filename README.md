@@ -11,8 +11,8 @@ This repository contains code for a heart attack prediction application using St
 
 1. Clone the repository and Navigate to the folder:
 
-```git
-https://github.com/Fariz-fx/Heart-Attack-Prediction.git
+```bash
+git clone https://github.com/Fariz-fx/Heart-Attack-Prediction.git
 cd .\Heart-Attack-Prediction\
 ```
 
