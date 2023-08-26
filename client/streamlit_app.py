@@ -78,55 +78,70 @@ def make_prediction(data,model_type):
         st.error("An error occurred. Please try again.")
         logger.error(f"Error occurred: {str(e)}")
 
-model_type = st.radio("Model Type", ["ChatGPT", "Custom Model"], horizontal=True)
+model_type = st.radio("Model Type", ["ChatGPT", "Custom Model"],help="Chatgpt is 70-80% accurate (or) Custom Model trained with the Data is 85% accurate")
+#input_style = st.sidebar.radio("Choose Input Style:", ["Slider", "Text Input"])
 
-age = st.number_input("Age", min_value=1, max_value=100, value=30)
-sex = st.radio("Sex", ["Male", "Female"], horizontal=True)
+age = st.slider("Age", min_value=18, max_value=100, value=30, help="Your current age in years")
+sex = st.radio("Sex", ["Male", "Female"], help="Your biological sex")
 cp_options = {
     0: "Typical Angina",
     1: "Atypical Angina",
     2: "Non-anginal Pain",
-    3: "Asymptomatic"
+    3: "No Pain (Asymptomatic)"
 }
-cp = st.radio("Chest Pain Type",options=list(cp_options.keys()),format_func=lambda x:cp_options[x],horizontal=True)## [0, 1, 2, 3]) ##  0 = Typical Angina, 1 = Atypical Angina, 2 = Non-anginal Pain, 3 = Asymptomatic
-trestbps = st.number_input("Resting Blood Pressure [mm Hg]", min_value=0, max_value=300,value=150)
-chol = st.number_input("Cholesterol [mg/dl]", min_value=0, max_value=1000,value=500)
+cp = st.selectbox("Nature of Chest Pain",options=list(cp_options.keys()),
+                  format_func=lambda x:cp_options[x],
+                  help="Please select the type of chest pain you experience. 'Typical Angina' is chest pain typically associated with heart disease and is triggered by physical exertion or stress. 'Atypical Angina' refers to chest pain that does not tick all the boxes for typical angina, it might show some symptoms of angina but not all. 'Non-anginal Pain' is chest pain that is not related to the heart. 'No Pain' indicates the lack of chest pain. When in doubt, please consult with your doctor.")## [0, 1, 2, 3]) ##  0 = Typical Angina, 1 = Atypical Angina, 2 = Non-anginal Pain, 3 = Asymptomatic
+trestbps = st.slider("Resting Blood Pressure [mm Hg]", min_value=80, max_value=200,value=120, 
+                     help="Your blood pressure level in mm Hg while at rest")
+chol = st.slider("Cholesterol [mg/dl]", min_value=120, max_value=570,value=200, 
+                 help="Your serum cholesterol level in mg/dl")
 fbs_options = {
-    0: "No",
-    1: "Yes"
+    0: "No (<=120 mg/dl)",
+    1: "Yes (>120 mg/dl)"
 }
-fbs = st.radio("Fasting Blood Sugar", options=list(fbs_options.keys()), format_func=lambda x: fbs_options[x],help="If > 120 mg/dl, select Yes",horizontal=True)
+fbs = st.radio("Is Fasting Blood Sugar  > 120 mg/dl?", options=list(fbs_options.keys()), format_func=lambda x: fbs_options[x],help="If > 120 mg/dl, select Yes")
 #fbs = st.selectbox("Fasting Blood Sugar", [0, 1]) ## fasting blood sugar > 120 mg/dl) (1 = true; 0 = false)
 restecg_options = {
     0: "Normal",
     1: "ST-T Wave Normality",
     2: "Left Ventricular Hypertrophy"
 }
-restecg = st.radio("Resting Electrocardiographic Results", options=list(restecg_options.keys()), format_func=lambda x: restecg_options[x],horizontal=True)
+restecg = st.selectbox("Resting Electrocardiographic Results", options=list(restecg_options.keys()), format_func=lambda x: restecg_options[x],
+                       help="These are the outcomes of your electrocardiographic test while at rest")
 #restecg = st.selectbox("Resting Electrocardiographic Results", [0, 1, 2]) ## 0 = Normal, 1 = ST-T wave normality, 2 = Left ventricular hypertrophy
-thalach = st.number_input("Maximum Heart Rate Achieved", min_value=0, max_value=300,value=150)
+thalach = st.slider("Maximum Heart Rate Achieved", min_value=0, max_value=300,value=150,
+                    help="This is the highest heart rate one achieves during maximum exercise. Normal resting heart rate for adults ranges from 60 to 100 beats per minute. During strenuous exercise it can go beyond, however, excessively high heart rate during exertion can be a sign of heart disease. Please input the heart rate reached at peak level during exercise. If unavailable, the average adult 'maximum' is typically 120-200 beats per minute.")
 exang_options = {
     0: "No",
     1: "Yes"
 }
-exang = st.radio("Exercise Induced Angina", options=list(exang_options.keys()), format_func=lambda x: exang_options[x],horizontal=True)
+exang = st.radio("Experience of Exercise Induced Angina", options=list(exang_options.keys()), 
+                 format_func=lambda x: exang_options[x],
+                 help="Exercise-induced angina is chest pain while exercising or doing any strenuous work. Select 'Yes' if you experience this, 'No' if you do not.")
 #exang = st.selectbox("Exercise Induced Angina", [0, 1]) ## (1 = yes; 0 = no)
-oldpeak = st.number_input("ST Depression Induced by Exercise", min_value=0.0, max_value=10.0,value=5.0)
+oldpeak = st.slider("ST Depression Induced by Exercise", min_value=-10.0, max_value=10.0,value=0.0,
+                          help="ST segment depression (in ECG) induced by exercise, relative to rest. The ST segment / T wave is affected during a heart attack")
 slope_options = {
-    0: "Upsloping",
-    1: "Flat",
-    2: "Downsloping"
+    0: "Upwards (Upsloping)",
+    1: "Flat Straight",
+    2: "Downwards (Downsloping)"
 }
-slope = st.radio("Slope of the Peak Exercise ST Segment", options=list(slope_options.keys()), format_func=lambda x: slope_options[x],horizontal=True)
+slope = st.selectbox("Peak Exercise ST Segment slope direction:", options=list(slope_options.keys()), 
+                     format_func=lambda x: slope_options[x],
+                     help="Indicates the pattern of heart's electrical activity during your maximum level of exercise. Select 'Upwards' if the pattern was sloping up, 'Flat Straight' if the pattern was flat, 'Downwards' if the pattern was sloping down")
 #slope = st.selectbox("Slope of the Peak Exercise ST Segment", [0, 1, 2])
-ca = st.number_input("Number of Major Vessels Colored by Fluoroscopy", min_value=0, max_value=4,value=4)
+ca = st.slider("Number of Major Vessels Colored by flourosopy in test", min_value=0, max_value=4,value=2,
+                     help="Enter the number of your heart’s major blood vessels that were colored by dye in testing. This test helps to visualize the inner structure of your heart's blood vessels. Numbers could be from 0 to 4.")
 thal_options = {
     0: "Normal",
     1: "Fixed Defect",
     2: "Reversible Defect",
     3: "Unknown"
 }
-thal = st.radio("Thalassemia", options=list(thal_options.keys()), format_func=lambda x: thal_options[x],horizontal=True)
+thal = st.selectbox("Status of Thalassemia", options=list(thal_options.keys()), 
+                    format_func=lambda x: thal_options[x],
+                    help="Thalassemia is a blood disorder. Please select the option as diagnosed by the doctor: 'Normal' if you have no conditions, 'Fixed Defect' if permanent defect was detected, 'Reversible Defect' for conditional disease, and 'Uncertain' if the diagnosis results are inconclusive.")
 #thal = st.selectbox("Thalassemia", [0, 1, 2, 3])
 
 # Add the toggle button/checkbox
