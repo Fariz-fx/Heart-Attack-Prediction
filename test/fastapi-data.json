@@ -13,3 +13,14 @@
     "ca": 4,
     "thal": 2
 }
+{
+    "age": 45,
+    "sex": 1,
+    "ever_experienced_chest_pain": 0,
+    "ever_diagnosed_high_bp": "string",
+    "ever_had_cholesterol_test": "string",
+    "ever_diagnosed_diabetes": "string",
+    "smoking_status": "string",
+    "physical_activity_frequency": "string",
+    "family_history_heart_disease": "string"
+  }
