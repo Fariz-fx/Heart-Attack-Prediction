@@ -15,8 +15,17 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 now = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+swagger_message='The application allows users to input various parameters related to heart health and receive a prediction on the probability of experiencing a heart attack.'
 
-app = FastAPI()
+app = FastAPI(
+    title='Heart Attack Prediction', 
+    version='1.0',
+    description=swagger_message,
+    contact={
+        'name': 'GitHub URL',
+        'url': 'https://github.com/Fariz-fx/Heart-Attack-Prediction',
+        },
+)
 
 # Load the trained model 
 # model = pickle.load(open('model/model.pkl', 'rb'))
@@ -38,18 +47,39 @@ class HeartAttackPredictionRequest(BaseModel):
     slope: int
     ca: int
     thal: int
-    ever_experienced_chest_pain: str  # yes or no
-    ever_diagnosed_high_bp: str  # yes or no
-    ever_had_cholesterol_test: str  # yes or no
-    ever_diagnosed_diabetes: str  # yes or no
+    
+class BasicHeartAttackPredictionRequest(BaseModel):
+    age: int
+    sex: int
+    ever_experienced_chest_pain: bool  # yes or no
+    ever_diagnosed_high_bp: bool  # yes or no
+    ever_had_cholesterol_test: bool  # yes or no
+    #chol: int
+    #bp: int
+    ever_diagnosed_diabetes: bool  # yes or no
     smoking_status: str  # never, former, current
     physical_activity_frequency: str  # sedentary, sometimes, regularly
-    family_history_heart_disease: str  # yes or no
+    family_history_heart_disease: bool  # yes or no
     
 def preprocess(data: HeartAttackPredictionRequest):
     df = pd.DataFrame(data.dict(), index=[0])  # fixed code error
     #df = pd.DataFrame(data)
     return scaler.transform(df)
+
+def preprocess(data: BasicHeartAttackPredictionRequest):
+    df_b = pd.DataFrame(data.dict(), index=[0])  # fixed code error
+    #df = pd.DataFrame(data)
+    return scaler.transform(df_b)
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to Heart Attack Prediction Swagger Page.."}
+
+
+# endpoint for url ping test
+@app.get("/health/ping")
+async def hello():
+    return {"message": "API is Healthy", "status": "Success"}
 
 @app.post("/predict_chatgpt")
 def predict_heart_attack(data: HeartAttackPredictionRequest):
@@ -103,7 +133,7 @@ def predict_heart_attack_custom_model(data: HeartAttackPredictionRequest):
         return {"error": "Failed to process the request."}
 
 @app.post("/normal_user_predict_chatgpt")
-def predict_heart_attack(data: HeartAttackPredictionRequest):
+def predict_heart_attack(data: BasicHeartAttackPredictionRequest):
     try:
         # Logging essential information
         logger.info(f"Data Submitted: {now}")
