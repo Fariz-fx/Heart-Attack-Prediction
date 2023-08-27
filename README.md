@@ -18,8 +18,26 @@ cd .\Heart-Attack-Prediction\
 
 2. (Optional) Create and activate a virtual environment:
 
+You can leverage either conda or venv. We recommend to use conda
+
+a. [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html)
+
+Create conda environment
+
 ```bash
-python -m venv env
+conda create -n "env" python=3.11
+```
+
+Activate conda
+
+```bash
+conda activate venv
+```
+
+b. [Venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment)
+
+```bash
+python -m venv venv
 ```
 
 - On Windows:
@@ -39,7 +57,7 @@ venv\Scripts\Activate.ps1
 - On macOS and Linux:
 
 ```bash
-source env/bin/activate
+source venv/bin/activate
 ```
 
 Note: Using a virtual environment is optional but recommended to isolate project dependencies.
@@ -69,14 +87,16 @@ Open New Terminal and ensure uvicorn is running in another terminal
 
 ```bash
 cd .\client\
-streamlit run streamlit_app.py
+streamlit run Home.py
 ```
 
 Visit [Streamlit locally to test frontend](http://localhost:8501/)
 
 ## Usage
 
-### FastAPI Server
+We have FastAPI installed as Backend to work on API's and Streamlit as Frontend where user interacts
+
+### Run FastAPI Server
 
 1. Start the FastAPI server by running the following command:
 
@@ -86,7 +106,7 @@ uvicorn fastapi_app:app --reload
 
 The server will start running at `http://localhost:8000`.
 
-### Streamlit App
+### Run Streamlit App
 
 1. Open a new terminal and navigate to the project directory.
 
@@ -103,6 +123,16 @@ The Streamlit app will open in your default web browser.
 4. Click the "Predict" button to send the data to the FastAPI server for prediction.
 
 5. The predicted probability of a heart attack will be displayed on the Streamlit app.
+
+### To Train your lightweight model
+
+To train your model with your own data, place the data in data folder and run train_model.py
+
+```python
+python3 train_model.py
+```
+
+Note: For Huge Data training recommend to use Notebook like Jupiter to get more benefit out of it
 
 ## Project Structure
 

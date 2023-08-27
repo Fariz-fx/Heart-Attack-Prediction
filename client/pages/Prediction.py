@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s : %(levelname)s : %(
 
 now = datetime.datetime.now().strftime('%d-%m-%Y_%H%M%S')
 
-st.title("Heart Attack Prediction")
+# def show():
 
 def log_analytics(age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal):
     logger.info(f"Age: {age}")
@@ -78,7 +78,9 @@ def make_prediction(data,model_type):
         st.error("An error occurred. Please try again.")
         logger.error(f"Error occurred: {str(e)}")
 
-model_type = st.radio("Model Type", ["ChatGPT", "Custom Model"],help="Chatgpt is 70-80% accurate (or) Custom Model trained with the Data is 85% accurate")
+
+st.title("Heart Attack Prediction")
+model_type = st.radio("Model Type", ["Custom Model", "ChatGPT"],help="Chatgpt is 70-80% accurate (or) Custom Model trained with the Data is 85% accurate")
 #input_style = st.sidebar.radio("Choose Input Style:", ["Slider", "Text Input"])
 
 age = st.slider("Age", min_value=18, max_value=100, value=30, help="Your current age in years")

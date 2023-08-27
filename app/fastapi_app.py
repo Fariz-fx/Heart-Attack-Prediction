@@ -20,8 +20,8 @@ app = FastAPI()
 # Load the trained model 
 # model = pickle.load(open('model/model.pkl', 'rb'))
 # scaler = pickle.load(open('model/scaler.pkl', 'rb')) 
-model = joblib.load('model/model.joblib')
-scaler = joblib.load('model/scaler.joblib') 
+model = joblib.load('model/Heart_Attack_model.joblib')
+scaler = joblib.load('model/Heart_Attack_scaler.joblib') 
 
 class HeartAttackPredictionRequest(BaseModel):
     age: int
