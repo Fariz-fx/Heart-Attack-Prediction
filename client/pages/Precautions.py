@@ -7,3 +7,4 @@ st.write("There are several precautions and lifestyle changes that can reduce th
         "excessive alcohol, and managing stress levels. Regular health check-ups will also help to monitor your "
         "heart condition and manage any existing health conditions effectively. Remember, the best way to "
         "prevent heart disease is to live a healthy lifestyle.")
+st.write("As always say, consult your doctor and perform annual health check")

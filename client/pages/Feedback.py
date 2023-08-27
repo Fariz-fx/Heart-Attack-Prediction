@@ -2,8 +2,17 @@ import openai
 import streamlit as st
 
 
-st.header("Share your Feedback")
-st.text_area("Please enter your valuable feedback here", value="", height=None) # To be replaced with real code
+st.title("HeartGuard: Feedback")
+st.write("We value your feedback! Please share your thoughts, suggestions, and comments with us.")
+    
+# Feedback form
+feedback_text = st.text_area("Your Valuable Feedback:", "",help="Type your anonymous valuable feedback here.")
+    
+if st.button("Submit Feedback"):
+    if feedback_text:
+        st.success("Thank you for your feedback! We appreciate your input.")
+    else:
+        st.warning("Please enter your feedback before submitting.")
 
 # with st.sidebar:
 #     st.title('🤖💬 OpenAI Chatbot')
