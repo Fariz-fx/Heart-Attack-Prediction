@@ -86,10 +86,10 @@ model_type = st.radio("Model Type", ["Custom Model", "ChatGPT"],help="Chatgpt is
 age = st.slider("Age", min_value=18, max_value=100, value=30, help="Your current age in years")
 sex = st.radio("Sex", ["Male", "Female"], help="Your biological sex")
 cp_options = {
+    3: "No Pain (Asymptomatic)",
     0: "Typical Angina",
     1: "Atypical Angina",
-    2: "Non-anginal Pain",
-    3: "No Pain (Asymptomatic)"
+    2: "Non-anginal Pain"
 }
 cp = st.selectbox("Nature of Chest Pain",options=list(cp_options.keys()),
                   format_func=lambda x:cp_options[x],

@@ -3,23 +3,55 @@ import streamlit as st
 def calculate_resting_blood_pressure(age, heart_rate):
     return 120 + (0.5 * age) - (0.1 * heart_rate)
 
+def calculate_cholesterol(age, gender, total_cholesterol):
+    return (
+        total_cholesterol - (0.2 * age)
+        if gender == "Male"
+        else total_cholesterol + (0.1 * age)
+    )
+
 def main():
-    st.title("Resting Blood Pressure Calculator")
+    st.title("Health Calculator")
     st.write("Enter your age and heart rate to calculate your Resting Blood Pressure [mm Hg].")
 
-    # Input fields
-    age = st.slider("Age", min_value=18, max_value=100, value=30)
+    rbp_column, spacer, cholesterol_column = st.columns([1, 0.1, 1])
+
+    with rbp_column:
+        rbp_section_data()
+        
+    # Spacer for visual separation
+    with spacer:
+        st.write("")
+        
+    with cholesterol_column:
+        st.header("Total Cholesterol Calculator")
+        # Input fields
+        age_cholesterol = st.slider("Age", min_value=18, max_value=100, value=30,key="cholesterol")
+        gender = st.selectbox("Gender", ["Male", "Female"])
+        total_cholesterol = st.number_input("Total Cholesterol", min_value=1, value=200)
+
+
+        # Calculate button
+        if st.button("Calculate Cholesterol Level"):
+            cholesterol_level = calculate_cholesterol(age_cholesterol, gender, total_cholesterol)
+            st.success(f"Your calculated Cholesterol level: {cholesterol_level:.2f} mg/dL")
+
+
+def rbp_section_data():
+    st.header("Resting Blood Pressure Calculator")
+    age_rbp = st.slider("Age", min_value=18, max_value=100, value=30)
     heart_rate = st.slider("Heart Rate", min_value=1, value=300,help="To get best accuracy, ensure to follow mentioned steps")
 
-    # Calculate button
     if st.button("Calculate Resting Blood Pressure"):
-        resting_blood_pressure = calculate_resting_blood_pressure(age, heart_rate)
+        resting_blood_pressure = calculate_resting_blood_pressure(age_rbp, heart_rate)
         st.success(f"Your calculated Resting Blood Pressure: {resting_blood_pressure:.2f} mm Hg")
 
     RBP_Best_Practices=st.expander("Best Practices to follow")
     with RBP_Best_Practices:
-        
+
         rest_Blood_pressure_best_practices()
+    
+    
 
 def rest_Blood_pressure_best_practices():
     # Additional information
