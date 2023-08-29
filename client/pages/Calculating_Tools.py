@@ -1,4 +1,5 @@
 import streamlit as st
+import math
 
 def calculate_resting_blood_pressure(age, heart_rate):
     return 120 + (0.5 * age) - (0.1 * heart_rate)
@@ -10,19 +11,36 @@ def calculate_cholesterol(age, gender, total_cholesterol):
         else total_cholesterol + (0.1 * age)
     )
 
+def calculate_bmi(weight, height):
+    return weight / (height ** 2)
+
+def calculate_bmr(weight, height, age, gender):
+    if gender == "Male":
+        return 66.5 + (13.75 * weight) + (5.003 * height * 100) - (6.75 * age)
+    else:
+        return 655 + (9.563 * weight) + (1.850 * height * 100) - (4.676 * age)
+
 def main():
     st.title("Health Calculator")
+    st.write("Use the following calculators to assess your health parameters.")
+
+    # Explanation
+    st.write("BMI Calculator helps you assess your Body Mass Index.")
+    st.write("BMR Calculator estimates your Basal Metabolic Rate.")
+    st.write("Resting Blood Pressure Calculator calculates your resting blood pressure.")
+    st.write("Total Cholesterol Calculator estimates your cholesterol level.")
+
     st.write("Enter your age and heart rate to calculate your Resting Blood Pressure [mm Hg].")
 
     rbp_column, spacer, cholesterol_column = st.columns([1, 0.1, 1])
 
     with rbp_column:
         rbp_section_data()
-        
+
     # Spacer for visual separation
     with spacer:
         st.write("")
-        
+
     with cholesterol_column:
         st.header("Total Cholesterol Calculator")
         # Input fields
@@ -36,6 +54,37 @@ def main():
             cholesterol_level = calculate_cholesterol(age_cholesterol, gender, total_cholesterol)
             st.success(f"Your calculated Cholesterol level: {cholesterol_level:.2f} mg/dL")
 
+    # Column Layout
+    columns = st.columns(2)
+
+    # BMI Column
+    with columns[0]:
+        st.header("BMI Calculator")
+        weight_bmi = st.number_input("Weight (kg)", min_value=1)
+        height_bmi = st.number_input("Height (m)", min_value=0.01)
+
+        if st.button("Calculate BMI"):
+            bmi = calculate_bmi(weight_bmi, height_bmi)
+            st.success(f"Your calculated BMI: {bmi:.2f}")
+
+    # BMR Column
+    with columns[1]:
+       bmr_calculator()
+    # Spacer for visual separation
+    st.write("")
+    st.write("---")
+
+
+def bmr_calculator():
+    st.header("BMR Calculator")
+    weight_bmr = st.number_input("Weight (kg)", min_value=1,key="bmr_weight")
+    height_bmr = st.number_input("Height (m)", min_value=0.01,key="bmr_height")
+    age_bmr = st.slider("Age", min_value=1, max_value=100, value=30)
+    gender_bmr = st.selectbox("Gender", ["Male", "Female"],key="bmr_gender")
+
+    if st.button("Calculate BMR"):
+        bmr = calculate_bmr(weight_bmr, height_bmr, age_bmr, gender_bmr)
+        st.success(f"Your calculated BMR: {bmr:.2f} calories/day")
 
 def rbp_section_data():
     st.header("Resting Blood Pressure Calculator")
