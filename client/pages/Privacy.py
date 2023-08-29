@@ -46,7 +46,9 @@ analytics_data = "\n".join([f"- {item}" for item in analytics_list])
 header_why_analytics ="### Why Analytics is required to be enabled"
 why_analytics_text ="By Default analytics is enabled which will help us in quick troubleshooting and know what data went and what data is received, this helps to validate is ML is working fine"
 analytics_retention_text = "As of now, we are not storing analytics data, but planning to store in 3rd party public cloud provider for 30 days"
-contact_text = "## Contact Us\n\nIf you have any questions or concerns about your personal information, you can contact us at [contact@example.com](mailto:contact@example.com)."
+header_third_party_usage = "## 3rd Party Using your data"
+third_party_usage_text = "In Prediction if you have selected ChatGPT then you are agreeing to [ChatGPT Privacy](https://openai.com/security)"
+contact_text = "## Contact Us\n\nIf you have any questions or concerns about your personal information, you can contact us at [fareesdeveloper@outlook.com](mailto:fareesdeveloper@outlook.com). And this is open source project available in [GitHub](https://github.com/Fariz-fx/Heart-Attack-Prediction)"
 
 # Build the UI
 st.title(header_text)
@@ -67,6 +69,9 @@ st.markdown(analytics_data)
 st.markdown(header_why_analytics)
 st.markdown(why_analytics_text)
 st.info(analytics_retention_text)
+
+st.markdown(header_third_party_usage)
+st.markdown(third_party_usage_text)
 
 st.markdown(contact_text)
 
