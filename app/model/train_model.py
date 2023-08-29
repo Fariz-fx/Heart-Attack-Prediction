@@ -5,13 +5,15 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 import joblib
 import logging
+import os
 
 # Declaration
-file_name="data.csv" # Provide File Name
+#file_name="../data/data.csv" # Provide File Name
+file_name = os.path.abspath("../data/Heart_Attack_data.csv")  # Use absolute path
 axis_value=1
 result_column="output" # In CSV the result column name
-scaler_joblib_name="scaler.joblib"
-model_joblib_name="model.joblib"
+scaler_joblib_name="Heart_Attack_scaler.joblib"
+model_joblib_name="Heart_Attack_model.joblib"
 test_size_declared=0.2 
 random_state_declared=62 #0
 cross_validation_value=7 #5
