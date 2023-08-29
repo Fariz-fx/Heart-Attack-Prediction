@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 import joblib
@@ -12,8 +12,8 @@ import os
 file_name = os.path.abspath("../data/Heart_Attack_data.csv")  # Use absolute path
 axis_value=1
 result_column="output" # In CSV the result column name
-scaler_joblib_name="Heart_Attack_scaler.joblib"
-model_joblib_name="Heart_Attack_model.joblib"
+scaler_joblib_name="SVC_Heart_Attack_scaler.joblib"
+model_joblib_name="SVC_Heart_Attack_model.joblib"
 test_size_declared=0.2 
 random_state_declared=62 #0
 cross_validation_value=7 #5
@@ -47,7 +47,7 @@ def split_data(X, y, test_size=test_size_declared, random_state=random_state_dec
 
 def train_save_model(X_train, y_train, model_path):
     try:
-        model = LogisticRegression()#SVC(probability=True)
+        model = SVC(probability=True)
         model.fit(X_train, y_train)
         joblib.dump(model, model_path)
         return model
