@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+import os
 
 st.header("Data Dashboard")
 st.sidebar.header("Upload CSV")
@@ -21,36 +22,42 @@ age,sex,cp,trestbps,chol,fbs,restecg,thalach,exang,oldpeak,slope,ca,thal,output
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.subheader("Scatter Plot: Age vs Cholesterol")
-    fig = go.Figure(data=go.Scatter(x=df['age'], y=df['chol'], mode='markers'))
-    fig.update_layout(title='Age vs Cholesterol', xaxis=dict(title='Age'), yaxis=dict(title='Cholesterol'))
-    st.plotly_chart(fig)
-    
-    # Histogram: Age Distribution
-    st.subheader("Histogram: Age Distribution")
-    hist_fig = px.histogram(df, x='age', nbins=10, title='Age Distribution')
-    st.plotly_chart(hist_fig)
 
-    # Bar Chart: Chest Pain Types
-    st.subheader("Bar Chart: Chest Pain Types")
-    cp_counts = df['cp'].value_counts().reset_index()
-    cp_counts.columns = ['Chest Pain Type', 'Count']
-    bar_fig = px.bar(cp_counts, x='Chest Pain Type', y='Count', title='Chest Pain Types')
-    st.plotly_chart(bar_fig)
-
-    # Box Plot: Age vs Cholesterol by Gender
-    st.subheader("Box Plot: Age vs Cholesterol by Gender")
-    box_fig = px.box(df, x='sex', y='chol', color='sex', points='all', title='Age vs Cholesterol by Gender')
-    st.plotly_chart(box_fig)
-
-    # Correlation Heatmap
-    st.subheader("Correlation Heatmap")
-    corr = df.corr()
-    heatmap_fig = px.imshow(corr, labels=dict(x="Feature", y="Feature", color="Correlation"))
-    st.plotly_chart(heatmap_fig)
 else:
-    st.sidebar.info("Want to visualize your data, Upload csv file with below data \n")
+    st.sidebar.info("Want to visualize your data, Upload csv file with below data")
     #st.sidebar.write("Got your own data,")
     st.sidebar.write("Download [sample CSV file](https://docs.google.com/spreadsheets/d/1SxQNJIU2xzhBqENgBWstN8k-MBPGbQ9ZoyhHfY0Jx2U/edit?usp=sharing), to upload your data")
     st.sidebar.download_button("Download Sample CSV", data=sample_data, file_name="sample.csv")
     st.sidebar.warning("Do not delete row 1 containing column headings. Feel free to update other rows with your data", icon="⚠️")
-    # df = pd.read_csv('../../app/data/data.csv')  # Make sure 'data.csv' exist or correct file path
+    
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.abspath(os.path.join(script_directory, '../../app/data/Heart_Attack_data.csv'))
+    df = pd.read_csv(file_path)  # Make sure 'data.csv' exist or correct file path
+
+
+fig = go.Figure(data=go.Scatter(x=df['age'], y=df['chol'], mode='markers'))
+fig.update_layout(title='Age vs Cholesterol', xaxis=dict(title='Age'), yaxis=dict(title='Cholesterol'))
+st.plotly_chart(fig)
+
+# Histogram: Age Distribution
+st.subheader("Histogram: Age Distribution")
+hist_fig = px.histogram(df, x='age', nbins=10, title='Age Distribution')
+st.plotly_chart(hist_fig)
+
+# Bar Chart: Chest Pain Types
+st.subheader("Bar Chart: Chest Pain Types")
+cp_counts = df['cp'].value_counts().reset_index()
+cp_counts.columns = ['Chest Pain Type', 'Count']
+bar_fig = px.bar(cp_counts, x='Chest Pain Type', y='Count', title='Chest Pain Types')
+st.plotly_chart(bar_fig)
+
+# Box Plot: Age vs Cholesterol by Gender
+st.subheader("Box Plot: Age vs Cholesterol by Gender")
+box_fig = px.box(df, x='sex', y='chol', color='sex', points='all', title='Age vs Cholesterol by Gender')
+st.plotly_chart(box_fig)
+
+# Correlation Heatmap
+st.subheader("Correlation Heatmap")
+corr = df.corr()
+heatmap_fig = px.imshow(corr, labels=dict(x="Feature", y="Feature", color="Correlation"))
+st.plotly_chart(heatmap_fig)
