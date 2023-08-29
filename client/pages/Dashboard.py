@@ -22,12 +22,14 @@ age,sex,cp,trestbps,chol,fbs,restecg,thalach,exang,oldpeak,slope,ca,thal,output
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.subheader("Scatter Plot: Age vs Cholesterol")
+
 else:
     st.sidebar.info("Want to visualize your data, Upload csv file with below data")
     #st.sidebar.write("Got your own data,")
     st.sidebar.write("Download [sample CSV file](https://docs.google.com/spreadsheets/d/1SxQNJIU2xzhBqENgBWstN8k-MBPGbQ9ZoyhHfY0Jx2U/edit?usp=sharing), to upload your data")
     st.sidebar.download_button("Download Sample CSV", data=sample_data, file_name="sample.csv")
     st.sidebar.warning("Do not delete row 1 containing column headings. Feel free to update other rows with your data", icon="⚠️")
+    
     script_directory = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.abspath(os.path.join(script_directory, '../../app/data/Heart_Attack_data.csv'))
     df = pd.read_csv(file_path)  # Make sure 'data.csv' exist or correct file path
