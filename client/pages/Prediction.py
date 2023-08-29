@@ -10,27 +10,16 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s : %(levelname)s : %(
 
 now = datetime.datetime.now().strftime('%d-%m-%Y_%H%M%S')
 
-# def show():
-
-def log_analytics(age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal):
-    logger.info(f"Age: {age}")
-    logger.info(f"Sex: {sex}")
-    logger.info(f"CP: {cp}")
-    logger.info(f"Trestbps: {trestbps}")
-    logger.info(f"Chol: {chol}")
-    logger.info(f"FBS: {fbs}")
-    logger.info(f"Restecg: {restecg}")
-    logger.info(f"Thalach: {thalach}")
-    logger.info(f"Exang: {exang}")
-    logger.info(f"Oldpeak: {oldpeak}")
-    logger.info(f"Slope: {slope}")
-    logger.info(f"CA: {ca}")
-    logger.info(f"Thal: {thal}")
+# Global variable for log status
+enable_analytics = False
 
 def make_prediction(data,model_type):
     try:
         if model_type == "ChatGPT":
-            logger.info("ChatGPT is selected")
+            if enable_analytics==True:
+                logger.info(f"Received a ChatGPT prediction request with the following data: {data}")
+            else:
+                logger.info("ChatGPT is selected")
             response = requests.post(f"{API_URL}/predict_chatgpt", json=data)
             if response.status_code == 200:
                 if prediction := response.json().get("prediction"):
@@ -46,7 +35,10 @@ def make_prediction(data,model_type):
                 st.error("Failed to get ChatGPT prediction. Please try again.")
                 logger.error(f"ChatGPT prediction request failed with status code: {response.status_code}")
         elif model_type == "Custom Model":
-            logger.info("Custom Model is selected")
+            if enable_analytics==True:
+                logger.info(f"Received a Custom Model prediction request with the following data: {data}")
+            else:
+                logger.info("Custom Model is selected")
             response = requests.post(f"{API_URL}/predict_custom_model", json=data)
             #st.write(f"DEBUG: Response: {response.json()}")  # Adding Debug
             if response.status_code == 200:
@@ -56,7 +48,7 @@ def make_prediction(data,model_type):
                 prediction_prob = response.json().get('Prediction_Probability_Percentage', 'N/A')
                 message = response.json().get('message', 'N/A')
                 if prediction_prob != 'N/A':
-                    prediction_results = f"Predicted possibility of Heart Attack: {prediction_prob}%"
+                    prediction_results = f"Predicted possibility of Heart Attack in Custom Model: {prediction_prob}%"
                     logger.info(prediction_results)  
                     st.info(message)
                 else:
@@ -70,6 +62,7 @@ def make_prediction(data,model_type):
             model_error="Invalid model type selected."
             st.error(model_error)
             logger.critical(model_error)
+        # logger.info(f"Making a {model_type} prediction with the following data: {data}")
 
     except requests.exceptions.RequestException as e:
         st.error("Failed to connect to the server. Please try again later.")
@@ -79,7 +72,15 @@ def make_prediction(data,model_type):
         logger.error(f"Error occurred: {str(e)}")
 
 
-st.title("Heart Attack Prediction")
+st.title("HU-Heart Attack Prediction")
+# Document the app functionality
+#st.markdown("## App Documentation")
+st.write("This app predicts the likelihood of a heart attack based on your inputs.")
+st.write("- Choose the prediction model type: Custom Model or ChatGPT.")
+st.write("- Adjust the input fields according to your personal information.")
+st.write("- Enable analytics to collect data for ML model accuracy.")
+st.write("- Click the 'Predict' button to get the prediction result.")
+st.write("- The result will be displayed based on the selected model.")
 model_type = st.radio("Model Type", ["Custom Model", "ChatGPT"],help="Chatgpt is 70-80% accurate (or) Custom Model trained with the Data is 85% accurate")
 #input_style = st.sidebar.radio("Choose Input Style:", ["Slider", "Text Input"])
 
@@ -112,7 +113,7 @@ restecg_options = {
 restecg = st.selectbox("Resting Electrocardiographic Results", options=list(restecg_options.keys()), format_func=lambda x: restecg_options[x],
                        help="These are the outcomes of your electrocardiographic test while at rest")
 #restecg = st.selectbox("Resting Electrocardiographic Results", [0, 1, 2]) ## 0 = Normal, 1 = ST-T wave normality, 2 = Left ventricular hypertrophy
-thalach = st.slider("Maximum Heart Rate Achieved", min_value=0, max_value=300,value=150,
+thalach = st.slider("Maximum Heart Rate Achieved", min_value=60, max_value=250,value=150,
                     help="This is the highest heart rate one achieves during maximum exercise. Normal resting heart rate for adults ranges from 60 to 100 beats per minute. During strenuous exercise it can go beyond, however, excessively high heart rate during exertion can be a sign of heart disease. Please input the heart rate reached at peak level during exercise. If unavailable, the average adult 'maximum' is typically 120-200 beats per minute.")
 exang_options = {
     0: "No",
@@ -122,7 +123,7 @@ exang = st.radio("Experience of Exercise Induced Angina", options=list(exang_opt
                  format_func=lambda x: exang_options[x],
                  help="Exercise-induced angina is chest pain while exercising or doing any strenuous work. Select 'Yes' if you experience this, 'No' if you do not.")
 #exang = st.selectbox("Exercise Induced Angina", [0, 1]) ## (1 = yes; 0 = no)
-oldpeak = st.slider("ST Depression Induced by Exercise", min_value=-10.0, max_value=10.0,value=0.0,
+oldpeak = st.slider("ST Depression Induced by Exercise", min_value=0.0, max_value=10.0,value=0.0,
                           help="ST segment depression (in ECG) induced by exercise, relative to rest. The ST segment / T wave is affected during a heart attack")
 slope_options = {
     0: "Upwards (Upsloping)",
@@ -133,7 +134,7 @@ slope = st.selectbox("Peak Exercise ST Segment slope direction:", options=list(s
                      format_func=lambda x: slope_options[x],
                      help="Indicates the pattern of heart's electrical activity during your maximum level of exercise. Select 'Upwards' if the pattern was sloping up, 'Flat Straight' if the pattern was flat, 'Downwards' if the pattern was sloping down")
 #slope = st.selectbox("Slope of the Peak Exercise ST Segment", [0, 1, 2])
-ca = st.slider("Number of Major Vessels Colored by flourosopy in test", min_value=0, max_value=4,value=2,
+ca = st.slider("Number of Major Vessels Colored by fluoroscopy in test", min_value=0, max_value=4,value=2,
                      help="Enter the number of your heart’s major blood vessels that were colored by dye in testing. This test helps to visualize the inner structure of your heart's blood vessels. Numbers could be from 0 to 4.")
 thal_options = {
     0: "Normal",
@@ -147,7 +148,7 @@ thal = st.selectbox("Status of Thalassemia", options=list(thal_options.keys()),
 #thal = st.selectbox("Thalassemia", [0, 1, 2, 3])
 
 # Add the toggle button/checkbox
-enable_analytics = st.checkbox("Enable Analytics", value=True, help="This will collect basic data to improve application performance")
+enable_analytics = st.checkbox("Enable Analytics", value=True, help="This will collect basic data to improve application performance and ML model accuracy verification")
 
 if st.button("Predict"):
     # Logging essential information
@@ -167,8 +168,5 @@ if st.button("Predict"):
         "ca": ca,
         "thal": thal
     }
-
-    if enable_analytics:
-        log_analytics(age, sex, cp_options[cp], trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal)
 
     make_prediction(data,model_type)
